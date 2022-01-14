@@ -34,8 +34,6 @@ class TimeDomainAdaptiveFilters():
             wight = np.asarray([0 for i in range(order)], dtype=np.float32)
         elif type == 'random':
             wight = np.asarray([random.random() for i in range(order)])
-        else:
-            print('Create array!!!!')
 
         return wight, error_lms
 
@@ -58,8 +56,7 @@ class TimeDomainAdaptiveFilters():
             wight = np.asarray([0 for i in range(self.order_nlms)], dtype=np.float32)
         elif type == 'random':
             wight = np.asarray([random.random() for i in range(self.order_nlms)])
-        else:
-            print('Create array!!!!')
+
         return wight, error
 
     def nlms_adapt( self, x, wight, e ):
@@ -82,8 +79,7 @@ class TimeDomainAdaptiveFilters():
             wight = np.asarray([0 for i in range(self.order_nlmf)], dtype=np.float32)
         elif type == 'random':
             wight = np.asarray([random.random() for i in range(self.order_nlmf)])
-        else:
-            print('Create array!!!!')
+
         return wight, error
 
     def nlmf_adapt(self, x, wight, e):

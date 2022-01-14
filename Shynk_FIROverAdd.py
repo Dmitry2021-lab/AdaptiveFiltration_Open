@@ -51,8 +51,6 @@ class OverAddFDAF():
 			wight = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
 		elif type == 'random':
 			wight = np.asarray([random.random() for i in range(self.N2)])
-		else:
-			print('Create array!!!!')
 		return wight, error
 
 	def OverAddFft( self, x ):
