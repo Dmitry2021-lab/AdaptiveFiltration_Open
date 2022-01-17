@@ -8,8 +8,8 @@ import datetime
 import os
 
 Params = {
-	'mu' : 79, #best parametr
-	'alf': 0.71, #best parametr
+	'mu' : 79, #это лучший параметр
+	'alf': 0.71, #это лучший параметр
 	'eps': 0.01,
 	'dft'  : 512,
 	'rate' : 16000
@@ -18,21 +18,19 @@ Params = {
 class Soo():
 	def __init__( self):
 		self.iterr = 0
-		self.N2 = 2 * Params['dft'] #size of Fourier Transform window
-		self.dir = os.getcwd()
-		self.old_x = np.asarray([0 for i in range(Params['dft'])])
-		self.zero = np.asarray([0 for i in range(Params['dft'])])
-		self.power = np.asarray([0 for i in range(self.N2)])
+		self.N2 = 2 * Params['dft']
+		self.old_x = np.zeros(Params['dft'])
+		self.zero = np.zeros(Params['dft'])
+		self.power = np.zeros(self.N2)
 		self.lmb = 1 - Params['alf']
 
 
 	def initWight( self, type='random' ):
-		error = np.asarray([1 for i in range(Params['dft'])], dtype=np.float32)
-		wight = np.asarray([])
+		error = np.random.sample(Params['dft'])
 		if type == 'zero':
-			wight = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
+			wight = np.zeros(self.N2)
 		elif type == 'random':
-			wight = np.asarray([random.random() for i in range(self.N2)])
+			wight = np.random.sample(self.N2)
 		return wight, error
 
 	def OverFft( self, x ):
@@ -66,10 +64,12 @@ class Soo():
 if __name__ == '__main__':
 	Buff = []
 	wv = Wave.PyWav()
+	dir = os.getcwd()
+
 	f = Soo()
 
-	NoiseFile = f.dir + '\\SeparateOutput\\' + 'micSplin7.wav'
-	UsefullFile = f.dir + '\\SeparateOutput\\' + 'micSplin1.wav'
+	NoiseFile = dir + '\\SeparateOutput\\' + 'micSplin7.wav'
+	UsefullFile = dir + '\\SeparateOutput\\' + 'micSplin1.wav'
 
 	signal = np.asarray(wv.ReadWav(UsefullFile), dtype=np.float32)
 	noise = np.asarray(wv.ReadWav(NoiseFile), dtype=np.float32)
@@ -83,4 +83,4 @@ if __name__ == '__main__':
 		W = f.adapt(e, xfft, W, y)
 		Buff = [*Buff, *e]
 	print('spend time = ', datetime.datetime.now() - now)
-	wv.WriteWav(f.dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)
+	wv.WriteWav(dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)

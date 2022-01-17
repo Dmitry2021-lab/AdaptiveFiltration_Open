@@ -19,6 +19,7 @@ def Correlation( ns_data, sgn_data, start, finish, acceptable_shift_left, accept
 	a = np.asarray(ns_data[start:finish])
 	if start - acceptable_shift_left < 0:
 		return 0
+	# print('Вычисление корреляции')
 	delt = finish - start
 	for i in range(start - acceptable_shift_left, start + acceptable_shift_right):
 		b = np.asarray(sgn_data[i:delt + i])
@@ -26,31 +27,29 @@ def Correlation( ns_data, sgn_data, start, finish, acceptable_shift_left, accept
 		if cor > max:
 			max = cor
 			index = i - start
+	# print ('Смещение = ', index)
 	return index
 
 
 class OverAddFDAF():
 	def __init__( self, dft, mu, eps, alf ):
-		self.dir = os.getcwd()
 		self.N = dft
-		self.N2 = 2 * dft #size of Fourier Transform window
+		self.N2 = 2 * dft
 		self.alf = alf
 		self.lmb = 1 - self.alf
 		self.mu = mu
 		self.eps = eps
-		self.zero = np.asarray([0 for i in range(self.N)])
-		self.Old_SgnFft = np.asarray([0 for i in range(self.N2)])
+		self.zero = np.zeros(self.N)
+		self.Old_SgnFft = np.zeros(self.N2)
 		self.mtrJ = np.asarray([(-1)**i for i in range(self.N2)])
-
-		self.power = np.asarray([random.random() for i in range(self.N2)])
+		self.power = np.random.sample(self.N2)
 
 	def initWight( self, type='random' ):
-		error = np.asarray([1 for i in range(self.N)], dtype=np.float32)
-		wight = np.asarray([])
+		error = np.random.sample(self.N)
 		if type == 'zero':
-			wight = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
+			wight = np.zeros(self.N2)
 		elif type == 'random':
-			wight = np.asarray([random.random() for i in range(self.N2)])
+			wight = np.random.sample(self.N2)
 		return wight, error
 
 	def OverAddFft( self, x ):
@@ -75,7 +74,7 @@ class OverAddFDAF():
 		W = W + dW
 		return W
 
-	# d array has size N, x array has size N, W array has size 2N
+	# d массив размером N, x массив размером N, W массив размером 2N
 	def Run( self, x, W, d, sfft ):
 		Y = sfft * W
 		z = np.fft.ifft(Y)
@@ -93,9 +92,10 @@ if __name__ == '__main__':
 	Buff = []
 	wv = Wave.PyWav()
 	f = OverAddFDAF(DFT, MU, EPS, ALF)
+	dir = os.getcwd()
 
-	NoiseFile = f.dir + '\\Waves\\' + 'micSplin7.wav'
-	UsefullFile = f.dir + '\\Waves\\' + 'micSplin1.wav'
+	NoiseFile = dir + '\\SeparateOutput\\' + 'micSplin7.wav'
+	UsefullFile = dir + '\\SeparateOutput\\' + 'micSplin1.wav'
 
 	signal = np.asarray(wv.ReadWav(UsefullFile), dtype=np.float32)
 	noise = np.asarray(wv.ReadWav(NoiseFile), dtype=np.float32)
@@ -111,4 +111,4 @@ if __name__ == '__main__':
 		W = f.adapt(e, sfft, W)
 		Buff = [*Buff, *e]
 	print('spend time = ', datetime.datetime.now() - now)
-	wv.WriteWav(f.dir + '/ResultWaves/' + 'Out_DF_' + str(f.N) + '.wav', Buff)
+	wv.WriteWav(dir + '/ResultWaves/' + 'Out_DF_' + str(f.N) + '.wav', Buff)

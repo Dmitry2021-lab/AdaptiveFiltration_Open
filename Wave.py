@@ -4,9 +4,11 @@ import numpy as np
 
 class PyWav:
     def __init__(self):
-        self.samplerate = 16000#Hz
+        self.samplerate = 16000
         self.length = 0
         self.bytes = 2
+        #self.Buff = []
+        self.bytes
 
     def ReadWav(self, nameWav):
         waveFile = wave.open(nameWav, 'r')

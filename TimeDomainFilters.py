@@ -22,18 +22,15 @@ class TimeDomainAdaptiveFilters():
         self.mu_nlmf = 0.01
         self.eps_nlmf = 1.
 
-        self.dir = os.getcwd()
-
-
     def lms_init(self, order = 100, mu = 0.01, type = 'zero'):
         self.order_lms = order
         self.mu_lms = mu
         error_lms = 1
-        wight = np.asarray([])
+
         if type == 'zero':
-            wight = np.asarray([0 for i in range(order)], dtype=np.float32)
+            wight = np.zeros(order)
         elif type == 'random':
-            wight = np.asarray([random.random() for i in range(order)])
+            wight = np.random.sample(order)
 
         return wight, error_lms
 
@@ -50,12 +47,12 @@ class TimeDomainAdaptiveFilters():
         self.order_nlms = order
         self.mu_nlms = mu
         self.eps_nlms = eps
-        wight = np.asarray([])
         error = 1
+
         if type == 'zero':
-            wight = np.asarray([0 for i in range(self.order_nlms)], dtype=np.float32)
+            wight = np.zeros(order)
         elif type == 'random':
-            wight = np.asarray([random.random() for i in range(self.order_nlms)])
+            wight = np.random.sample(order)
 
         return wight, error
 
@@ -73,12 +70,12 @@ class TimeDomainAdaptiveFilters():
         self.order_nlmf = order
         self.mu_nlmf = mu
         self.eps_nlmf = eps
-        wight = np.asarray([])
         error = 1
+
         if type == 'zero':
-            wight = np.asarray([0 for i in range(self.order_nlmf)], dtype=np.float32)
+            wight = np.zeros(order)
         elif type == 'random':
-            wight = np.asarray([random.random() for i in range(self.order_nlmf)])
+            wight = np.random.sample(order)
 
         return wight, error
 
@@ -92,14 +89,15 @@ class TimeDomainAdaptiveFilters():
         e = d - y
         return y, e
 
-ORDER = 512 #order of filter
+ORDER = 512
 if __name__ == '__main__':
     wv = Wave.PyWav()
+    dir = os.getcwd()
 
     f = TimeDomainAdaptiveFilters()
     w,e = f.nlms_init(order = ORDER)
-    NoiseFile = f.dir +'\\SeparateOutput\\'+'micSplin7.wav'
-    UsefullFile = f.dir +'\\SeparateOutput\\'+'micSplin1.wav'
+    NoiseFile = dir +'\\SeparateOutput\\'+'micSplin7.wav'
+    UsefullFile = dir +'\\SeparateOutput\\'+'micSplin1.wav'
     noise = np.asarray(wv.ReadWav(NoiseFile), dtype=np.float32)
     signal = np.asarray(wv.ReadWav(UsefullFile), dtype=np.float32)
     now = datetime.datetime.now()
@@ -112,7 +110,7 @@ if __name__ == '__main__':
 
         Buff.append(e)
     print('spend time = ', datetime.datetime.now() - now)
-    wv.WriteWav(f.dir + '/ResultWaves/' + 'Out_LMS_' + str(f.order_nlms) + '.wav', Buff)
+    wv.WriteWav(dir + '/ResultWaves/' + 'Out_LMS_' + str(f.order_nlms) + '.wav', Buff)
 
 
 

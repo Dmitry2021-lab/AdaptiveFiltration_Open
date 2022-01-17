@@ -40,31 +40,26 @@ def Correlation( ns_data, sgn_data, start, finish, acceptable_shift_left, accept
 
 class IIR_OverSave():
 	def __init__( self):
-		self.dir = os.getcwd()
-		self.N2 = 2 * Params['dft'] #size of Fourier Transform window
+		self.N2 = 2 * Params['dft']
 		self.lmb_d = 1 - Params['alf_d']
 		self.lmb_x = 1 - Params['alf_x']
-		self.old_x = np.asarray([0 for i in range(Params['dft'])])
-		self.old_d = np.asarray([0 for i in range(Params['dft'])])
+		self.old_x = np.zeros(Params['dft'])
+		self.old_d = np.zeros(Params['dft'])
 
-		self.power_x = np.asarray([random.random() for i in range(self.N2)])
-		self.power_d = np.asarray([random.random() for i in range(self.N2)])
-		self.zero = np.asarray([0 for i in range(Params['dft'])])
-		self.oldWX = np.asarray([random.random() for i in range(self.N2)])
-		self.oldWD = np.asarray([random.random() for i in range(self.N2)])
+		self.power_x = np.random.sample(self.N2)
+		self.power_d = np.random.sample(self.N2)
+		self.zero = np.zeros(Params['dft'])
+		self.oldWX = np.random.sample(self.N2)
+		self.oldWD = np.random.sample(self.N2)
 
 	def initWight( self, type='random' ):
-		error = np.asarray([1 for i in range(Params['dft'])], dtype=np.float32)
-		wight_x = np.asarray([])
-		wight_d = np.asarray([])
+		error = np.random.sample(Params['dft'])
 		if type == 'zero':
-			wight_x = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
-			wight_d = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
+			wight_x =np.zeros(self.N2)
+			wight_d = np.zeros(self.N2)
 		elif type == 'random':
-			wight_x = np.asarray([random.random() for i in range(self.N2)])
-			wight_d = np.asarray([random.random() for i in range(self.N2)])
-		else:
-			print('Create array!!!!')
+			wight_x = np.random.sample(self.N2)
+			wight_d = np.random.sample(self.N2)
 		return wight_x, wight_d, error
 
 	def x_OverFft( self, x ):
@@ -105,7 +100,7 @@ class IIR_OverSave():
 		XW = XW + dW
 		return XW
 
-	# d array has size N, x array has size N, W array has size 2N
+	# d массив размером N, x массив размером N, W массив размером 2N
 	def Run( self, d, XW, xfft, DW, dfft ):
 		Y = xfft * XW + dfft * DW
 		z = np.fft.ifft(Y)
@@ -121,9 +116,10 @@ if __name__ == '__main__':
 	Buff1 = []
 	wv = Wave.PyWav()
 	f = IIR_OverSave()
+	dir = os.getcwd()
 
-	NoiseFile = f.dir + '\\SeparateOutput\\' + 'micSplin7.wav'
-	UsefullFile = f.dir + '\\SeparateOutput\\' + 'micSplin1.wav'
+	NoiseFile = dir + '\\SeparateOutput\\' + 'micSplin7.wav'
+	UsefullFile = dir + '\\SeparateOutput\\' + 'micSplin1.wav'
 
 	signal = np.asarray(wv.ReadWav(UsefullFile), dtype=np.float32)
 	noise = np.asarray(wv.ReadWav(NoiseFile), dtype=np.float32)
@@ -141,4 +137,4 @@ if __name__ == '__main__':
 		enh = 5*e
 		Buff = [*Buff, *enh]
 	print('spend time = ', datetime.datetime.now() - now)
-	wv.WriteWav(f.dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)
+	wv.WriteWav(dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)

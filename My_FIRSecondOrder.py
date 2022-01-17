@@ -20,25 +20,20 @@ class SecondOrderFilter():
 	def __init__( self):
 		self.iterr = 0
 		self.N2 = 2 * Params['dft']
-		self.dir = os.getcwd()
-		self.old_x = np.asarray([0 for i in range(Params['dft'])])
-		self.zero = np.asarray([0 for i in range(Params['dft'])])
-		self.power = np.asarray([0 for i in range(self.N2)])
-		self.OldSgnFft1 = np.asarray([0 for i in range(self.N2)])
-		self.oldMU1 = np.asarray([0 for i in range(self.N2)])
+		self.old_x = np.zeros(Params['dft'])
+		self.zero = np.zeros(Params['dft'])
+		self.power = np.zeros(self.N2)
+		self.OldSgnFft1 = np.zeros(self.N2)
+		self.oldMU1 = np.zeros(self.N2)
 
 	def initWight( self, type='random' ):
-		error = np.asarray([1 for i in range(Params['dft'])], dtype=np.float32)
-		wight1 = np.asarray([])
-		wight2 = np.asarray([])
+		error = np.random.sample(Params['dft'])
 		if type == 'zero':
-			wight1 = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
-			wight2 = np.asarray([0 for i in range(self.N2)], dtype=np.float32)
+			wight1 = np.zeros(self.N2)
+			wight2 = np.zeros(self.N2)
 		elif type == 'random':
-			wight1 = np.asarray([random.random() for i in range(self.N2)])
-			wight2 = np.asarray([random.random() for i in range(self.N2)])
-		else:
-			print('Заполнить массив весов!!!!')
+			wight1 = np.random.sample(self.N2)
+			wight2 = np.random.sample(self.N2)
 		return wight1, wight2, error
 
 	def OverFft( self, x ):
@@ -80,9 +75,10 @@ if __name__ == '__main__':
 	Buff = []
 	wv = Wave.PyWav()
 	f = SecondOrderFilter()
+	dir = os.getcwd()
 
-	NoiseFile = f.dir + '\\SeparateOutput\\' + 'micSplin7.wav'
-	UsefullFile = f.dir + '\\SeparateOutput\\' + 'micSplin1.wav'
+	NoiseFile = dir + '\\SeparateOutput\\' + 'micSplin7.wav'
+	UsefullFile = dir + '\\SeparateOutput\\' + 'micSplin1.wav'
 
 	signal = np.asarray(wv.ReadWav(UsefullFile), dtype=np.float32)
 	noise = np.asarray(wv.ReadWav(NoiseFile), dtype=np.float32)
@@ -96,4 +92,4 @@ if __name__ == '__main__':
 		W1, W2 = f.adapt(W1, W2, e, xfft)
 		Buff = [*Buff, *e]
 	print('spend time = ', datetime.datetime.now() - now)
-	wv.WriteWav(f.dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)
+	wv.WriteWav(dir + '/ResultWaves/' + 'Out_DF_' + str(Params['dft']) + '.wav', Buff)
